@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
 import {OutputProcessor} from './types'
+import path from 'path'
 
 interface RuffEntry {
   code: string
@@ -17,9 +18,11 @@ interface Location {
 
 export const ruffOutputProcessor: OutputProcessor = async output => {
   const parsed: RuffEntry[] = JSON.parse(output)
-  core.debug(`Problems found: ${parsed.length}`)
+  const basepath = path.resolve(__dirname)
+  core.info(`Base ${basepath}, ${process.cwd()}`)
+  core.info(`Problems found: ${parsed.length}`)
   // TODO process the entries
   for (const entry of parsed) {
-    core.debug(`Entry: ${entry.filename}`)
+    core.info(`Entry: ${entry.filename}`)
   }
 }

@@ -107,15 +107,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.ruffOutputProcessor = void 0;
 const core = __importStar(__nccwpck_require__(186));
+const path_1 = __importDefault(__nccwpck_require__(622));
 const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, function* () {
     const parsed = JSON.parse(output);
-    core.debug(`Problems found: ${parsed.length}`);
+    const basepath = path_1.default.resolve(__dirname);
+    core.info(`Base ${basepath}, ${process.cwd()}`);
+    core.info(`Problems found: ${parsed.length}`);
     // TODO process the entries
     for (const entry of parsed) {
-        core.debug(`Entry: ${entry.filename}`);
+        core.info(`Entry: ${entry.filename}`);
     }
 });
 exports.ruffOutputProcessor = ruffOutputProcessor;
