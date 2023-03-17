@@ -17,14 +17,31 @@ interface Location {
 }
 
 export const ruffOutputProcessor: OutputProcessor = async output => {
+  const octokit = github.getOctokit(core.getInput('token'))
+  const check = await octokit.rest.checks.create({
+    ...github.context.repo,
+    name: 'ruff',
+    head_sha: github.context.sha,
+    status: 'in_progress'
+  })
+
+  core.info('CHECK:')
+  core.info(JSON.stringify(check))
+
+  const check_run_id = check.data.id
   const parsed: RuffEntry[] = JSON.parse(output)
   const problems = parsed.length
   if (!problems) {
+    await octokit.rest.checks.update({
+      ...github.context.repo,
+      check_run_id,
+      status: 'completed',
+      conclusion: 'success'
+    })
     return
   }
 
   const basePath = `${process.cwd()}/`
-  const octokit = github.getOctokit(core.getInput('token'))
   type Annotation = Parameters<typeof octokit['rest']['checks']['update']>[0]
   const annotations: Annotation[] = parsed.map(entry => {
     const relativePath = entry.filename.replace(basePath, '')
@@ -42,16 +59,6 @@ export const ruffOutputProcessor: OutputProcessor = async output => {
   core.info('ANNOTATIONS:')
   core.info(JSON.stringify(annotations))
 
-  const res = await octokit.rest.checks.listForRef({
-    check_name: 'validate-python', // TODO configurable
-    ...github.context.repo,
-    ref: github.context.sha
-  })
-
-  core.info('RES:')
-  core.info(JSON.stringify(res))
-
-  const check_run_id = res.data.check_runs[0].id
   await octokit.rest.checks.update({
     ...github.context.repo,
     check_run_id,
@@ -59,7 +66,9 @@ export const ruffOutputProcessor: OutputProcessor = async output => {
       title: 'Ruff failure',
       summary: `${annotations.length} errors(s) found`,
       annotations
-    }
+    },
+    status: 'completed',
+    conclusion: 'failure'
   })
   core.setFailed(`Problems found: ${parsed.length}`)
 }

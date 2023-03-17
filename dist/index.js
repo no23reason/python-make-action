@@ -112,13 +112,18 @@ exports.ruffOutputProcessor = void 0;
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, function* () {
+    const octokit = github.getOctokit(core.getInput('token'));
+    const check = yield octokit.rest.checks.create(Object.assign(Object.assign({}, github.context.repo), { name: 'ruff', head_sha: github.context.sha, status: 'in_progress' }));
+    core.info('CHECK:');
+    core.info(JSON.stringify(check));
+    const check_run_id = check.data.id;
     const parsed = JSON.parse(output);
     const problems = parsed.length;
     if (!problems) {
+        yield octokit.rest.checks.update(Object.assign(Object.assign({}, github.context.repo), { check_run_id, status: 'completed', conclusion: 'success' }));
         return;
     }
     const basePath = `${process.cwd()}/`;
-    const octokit = github.getOctokit(core.getInput('token'));
     const annotations = parsed.map(entry => {
         const relativePath = entry.filename.replace(basePath, '');
         return {
@@ -133,15 +138,11 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
     });
     core.info('ANNOTATIONS:');
     core.info(JSON.stringify(annotations));
-    const res = yield octokit.rest.checks.listForRef(Object.assign(Object.assign({ check_name: 'validate-python' }, github.context.repo), { ref: github.context.sha }));
-    core.info('RES:');
-    core.info(JSON.stringify(res));
-    const check_run_id = res.data.check_runs[0].id;
     yield octokit.rest.checks.update(Object.assign(Object.assign({}, github.context.repo), { check_run_id, output: {
             title: 'Ruff failure',
             summary: `${annotations.length} errors(s) found`,
             annotations
-        } }));
+        }, status: 'completed', conclusion: 'failure' }));
     core.setFailed(`Problems found: ${parsed.length}`);
 });
 exports.ruffOutputProcessor = ruffOutputProcessor;
