@@ -136,15 +136,19 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
     const basePath = `${process.cwd()}/`;
     const annotations = parsed.map(entry => {
         const relativePath = entry.filename.replace(basePath, '');
-        return {
+        const annotation = {
             path: relativePath,
             start_line: entry.location.row,
             end_line: entry.end_location.row,
-            // start_column: entry.location.column,
-            // end_column: entry.end_location.column,
             annotation_level: 'failure',
             message: `[${entry.code}] ${entry.message}`
         };
+        // only set the columns if rows match, otherwise the API will complain
+        if (entry.location.row === entry.end_location.row) {
+            annotation.start_column = entry.location.column;
+            annotation.end_column = entry.end_location.column;
+        }
+        return annotation;
     });
     core.info('ANNOTATIONS:');
     core.info(JSON.stringify(annotations));
