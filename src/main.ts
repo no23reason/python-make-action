@@ -8,16 +8,16 @@ const outputProcessors: Record<string, OutputProcessor> = {
 }
 
 function parseInputs(): {
-  scriptName: string
+  target: string
   outputProcessor: OutputProcessor
 } {
-  const scriptName = core.getInput('scriptName')
-  const scriptType = core.getInput('scriptType')
+  const target = core.getInput('target')
+  const scriptType = core.getInput('type')
   const outputProcessor = outputProcessors[scriptType]
   if (!outputProcessor) {
     throw new Error(`Unknown script type "${scriptType}"`)
   }
-  return {scriptName, outputProcessor}
+  return {target, outputProcessor}
 }
 
 async function runMakeScript(scriptName: string): Promise<string> {
@@ -27,7 +27,7 @@ async function runMakeScript(scriptName: string): Promise<string> {
 
 async function run(): Promise<void> {
   try {
-    const {scriptName, outputProcessor} = parseInputs()
+    const {target: scriptName, outputProcessor} = parseInputs()
     const output = await runMakeScript(scriptName)
     await outputProcessor(output)
   } catch (error) {

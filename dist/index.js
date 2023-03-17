@@ -42,13 +42,13 @@ const outputProcessors = {
     ruff: ruff_1.ruffOutputProcessor
 };
 function parseInputs() {
-    const scriptName = core.getInput('scriptName');
-    const scriptType = core.getInput('scriptType');
+    const target = core.getInput('target');
+    const scriptType = core.getInput('type');
     const outputProcessor = outputProcessors[scriptType];
     if (!outputProcessor) {
         throw new Error(`Unknown script type "${scriptType}"`);
     }
-    return { scriptName, outputProcessor };
+    return { target, outputProcessor };
 }
 function runMakeScript(scriptName) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -59,7 +59,7 @@ function runMakeScript(scriptName) {
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const { scriptName, outputProcessor } = parseInputs();
+            const { target: scriptName, outputProcessor } = parseInputs();
             const output = yield runMakeScript(scriptName);
             yield outputProcessor(output);
         }

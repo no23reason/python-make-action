@@ -2,10 +2,10 @@ name: 'Python Make Action'
 description: 'GitHub action to run a make-based script and show any errors it found in the source code'
 author: 'Dan Homola'
 inputs:
-  scriptName:
+  target:
     required: true
     description: 'name of the make target to run'
-  scriptType:
+  type:
     required: true
     description: 'type of the make target to run, used to decide how to process the output'
 runs:
