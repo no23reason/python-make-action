@@ -52,7 +52,7 @@ function parseInputs() {
 }
 function runMakeScript(scriptName) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { stdout } = yield exec.getExecOutput('make', [scriptName]);
+        const { stdout } = yield exec.getExecOutput('make', ['-s', scriptName]);
         return stdout;
     });
 }

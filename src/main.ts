@@ -21,7 +21,7 @@ function parseInputs(): {
 }
 
 async function runMakeScript(scriptName: string): Promise<string> {
-  const {stdout} = await exec.getExecOutput('make', [scriptName])
+  const {stdout} = await exec.getExecOutput('make', ['-s', scriptName])
   return stdout
 }
 
