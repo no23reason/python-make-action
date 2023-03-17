@@ -113,14 +113,24 @@ const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
 const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, function* () {
     const octokit = github.getOctokit(core.getInput('token'));
-    const check = yield octokit.rest.checks.create(Object.assign(Object.assign({}, github.context.repo), { name: 'ruff', head_sha: github.context.sha, status: 'in_progress' }));
-    core.info('CHECK:');
-    core.info(JSON.stringify(check));
-    const check_run_id = check.data.id;
+    // const check = await octokit.rest.checks.create({
+    //   ...github.context.repo,
+    //   name: 'ruff',
+    //   head_sha: github.context.sha,
+    //   status: 'in_progress'
+    // })
+    // core.info('CHECK:')
+    // core.info(JSON.stringify(check))
+    // const check_run_id = check.data.id
     const parsed = JSON.parse(output);
     const problems = parsed.length;
     if (!problems) {
-        yield octokit.rest.checks.update(Object.assign(Object.assign({}, github.context.repo), { check_run_id, status: 'completed', conclusion: 'success' }));
+        // await octokit.rest.checks.update({
+        //   ...github.context.repo,
+        //   check_run_id,
+        //   status: 'completed',
+        //   conclusion: 'success'
+        // })
         return;
     }
     const basePath = `${process.cwd()}/`;
@@ -138,11 +148,13 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
     });
     core.info('ANNOTATIONS:');
     core.info(JSON.stringify(annotations));
-    yield octokit.rest.checks.update(Object.assign(Object.assign({}, github.context.repo), { check_run_id, output: {
+    const res = yield octokit.rest.checks.create(Object.assign(Object.assign({}, github.context.repo), { output: {
             title: 'Ruff failure',
             summary: `${annotations.length} errors(s) found`,
             annotations
         }, status: 'completed', conclusion: 'failure' }));
+    core.info('RES:');
+    core.info(JSON.stringify(res));
     core.setFailed(`Problems found: ${parsed.length}`);
 });
 exports.ruffOutputProcessor = ruffOutputProcessor;
