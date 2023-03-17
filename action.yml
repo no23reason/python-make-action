@@ -5,6 +5,9 @@ inputs:
   target:
     required: true
     description: 'name of the make target to run'
+  token:
+    required: true
+    description: 'token to update the repo'
   type:
     required: true
     description: 'type of the make target to run, used to decide how to process the output'

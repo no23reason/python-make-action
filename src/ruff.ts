@@ -24,8 +24,7 @@ export const ruffOutputProcessor: OutputProcessor = async output => {
   }
 
   const basePath = `${process.cwd()}/`
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const octokit = github.getOctokit(process.env.GITHUB_TOKEN!)
+  const octokit = github.getOctokit(core.getInput('token'))
   type Annotation = Parameters<typeof octokit['rest']['checks']['update']>[0]
   const annotations: Annotation[] = parsed.map(entry => {
     const relativePath = entry.filename.replace(basePath, '')

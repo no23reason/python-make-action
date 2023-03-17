@@ -118,8 +118,7 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
         return;
     }
     const basePath = `${process.cwd()}/`;
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+    const octokit = github.getOctokit(core.getInput('token'));
     const annotations = parsed.map(entry => {
         const relativePath = entry.filename.replace(basePath, '');
         return {
