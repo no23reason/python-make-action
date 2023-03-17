@@ -1,3 +1,3 @@
 .PHONY: lint
 lint:
-	echo "success"
+	echo "[]"
