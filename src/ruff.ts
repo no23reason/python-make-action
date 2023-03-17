@@ -67,7 +67,9 @@ export const ruffOutputProcessor: OutputProcessor = async output => {
       annotations
     },
     status: 'completed',
-    conclusion: 'failure'
+    conclusion: 'failure',
+    head_sha: github.context.sha,
+    name: 'ruff'
   })
   core.info('RES:')
   core.info(JSON.stringify(res))
