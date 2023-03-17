@@ -140,8 +140,8 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
             path: relativePath,
             start_line: entry.location.row,
             end_line: entry.end_location.row,
-            start_column: entry.location.column,
-            end_column: entry.end_location.column,
+            // start_column: entry.location.column,
+            // end_column: entry.end_location.column,
             annotation_level: 'failure',
             message: `[${entry.code}] ${entry.message}`
         };
