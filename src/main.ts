@@ -1,16 +1,41 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as exec from '@actions/exec'
+import {OutputProcessor} from './types'
+import {ruffOutputProcessor} from './ruff'
+
+const outputProcessors: Record<string, OutputProcessor> = {
+  ruff: ruffOutputProcessor
+}
+
+function parseInputs(): {
+  scriptName: string
+  outputProcessor: OutputProcessor
+} {
+  const scriptName = core.getInput('scriptName')
+  const scriptType = core.getInput('scriptType')
+  if (!scriptName) {
+    throw new Error('The script name is mandatory')
+  }
+  if (!scriptType) {
+    throw new Error('The script type is mandatory')
+  }
+  const outputProcessor = outputProcessors[scriptType]
+  if (!outputProcessor) {
+    throw new Error(`Unknown script type "${scriptType}"`)
+  }
+  return {scriptName, outputProcessor}
+}
+
+async function runMakeScript(scriptName: string): Promise<string> {
+  const {stdout} = await exec.getExecOutput('make', [scriptName])
+  return stdout
+}
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
+    const {scriptName, outputProcessor} = parseInputs()
+    const output = await runMakeScript(scriptName)
+    await outputProcessor(output)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
