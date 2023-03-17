@@ -152,7 +152,7 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
             title: 'Ruff failure',
             summary: `${annotations.length} errors(s) found`,
             annotations
-        }, conclusion: 'failure', head_sha: github.context.ref, name: 'ruff' }));
+        }, conclusion: 'failure', head_sha: 'ff2abd6', name: 'ruff' }));
     core.info('RES:');
     core.info(JSON.stringify(res));
     core.setFailed(`Problems found: ${parsed.length}`);
