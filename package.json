@@ -1,8 +1,8 @@
 {
-  "name": "typescript-action",
+  "name": "python-make-action",
   "version": "0.0.0",
   "private": true,
-  "description": "TypeScript template action",
+  "description": "GitHub action to run a make-based script and show any errors it found in the source code",
   "main": "lib/main.js",
   "scripts": {
     "build": "tsc",
