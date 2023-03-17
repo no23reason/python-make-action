@@ -1,11 +1,13 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Python Make Action'
+description: 'GitHub action to run a make-based script and show any errors it found in the source code'
+author: 'Dan Homola'
 inputs:
-  milliseconds: # change this
+  scriptName:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'name of the make target to run'
+  scriptType:
+    required: true
+    description: 'type of the make target to run, used to decide how to process the output'
 runs:
   using: 'node16'
   main: 'dist/index.js'

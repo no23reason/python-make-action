@@ -13,12 +13,6 @@ function parseInputs(): {
 } {
   const scriptName = core.getInput('scriptName')
   const scriptType = core.getInput('scriptType')
-  if (!scriptName) {
-    throw new Error('The script name is mandatory')
-  }
-  if (!scriptType) {
-    throw new Error('The script type is mandatory')
-  }
   const outputProcessor = outputProcessors[scriptType]
   if (!outputProcessor) {
     throw new Error(`Unknown script type "${scriptType}"`)
