@@ -133,7 +133,7 @@ const ruffOutputProcessor = (output) => __awaiter(void 0, void 0, void 0, functi
     });
     core.info('ANNOTATIONS:');
     core.info(JSON.stringify(annotations));
-    const res = yield octokit.rest.checks.listForRef(Object.assign(Object.assign({ check_name: 'Ruff' }, github.context.repo), { ref: github.context.sha }));
+    const res = yield octokit.rest.checks.listForRef(Object.assign(Object.assign({ check_name: 'validate-python' }, github.context.repo), { ref: github.context.sha }));
     core.info('RES:');
     core.info(JSON.stringify(res));
     const check_run_id = res.data.check_runs[0].id;

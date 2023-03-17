@@ -43,7 +43,7 @@ export const ruffOutputProcessor: OutputProcessor = async output => {
   core.info(JSON.stringify(annotations))
 
   const res = await octokit.rest.checks.listForRef({
-    check_name: 'Ruff',
+    check_name: 'validate-python', // TODO configurable
     ...github.context.repo,
     ref: github.context.sha
   })
